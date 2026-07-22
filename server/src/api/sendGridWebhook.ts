@@ -57,19 +57,26 @@ export async function processSendGridEvents(events: Array<z.infer<typeof eventSc
     const contactId = event.contactId ?? custom.contactId;
     if (!workspaceId) continue;
     try {
-      await MailEventModel.create({
-        providerEventId: event.sg_event_id,
-        workspaceId,
-        runId,
-        contactId,
-        providerMessageId: event.sg_message_id,
-        email: event.email,
-        event: event.event,
-        eventType: event.type,
-        occurredAt: new Date(event.timestamp * 1000),
-        reason: event.reason ?? event.response,
-        status: event.status
-      });
+      const stored = await MailEventModel.updateOne(
+        { providerEventId: event.sg_event_id },
+        {
+          $setOnInsert: {
+            providerEventId: event.sg_event_id,
+            workspaceId,
+            runId,
+            contactId,
+            providerMessageId: event.sg_message_id,
+            email: event.email,
+            event: event.event,
+            eventType: event.type,
+            occurredAt: new Date(event.timestamp * 1000),
+            reason: event.reason ?? event.response,
+            status: event.status
+          }
+        },
+        { upsert: true }
+      );
+      if (stored.upsertedCount === 0) { duplicates += 1; continue; }
     } catch (error) {
       if (isDuplicateKey(error)) { duplicates += 1; continue; }
       throw error;
