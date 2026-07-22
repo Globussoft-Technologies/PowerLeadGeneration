@@ -55,7 +55,7 @@ jobs:
         run: npm run build
 
       - name: Upload production artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: power-leads-${{ github.sha }}
           if-no-files-found: error
