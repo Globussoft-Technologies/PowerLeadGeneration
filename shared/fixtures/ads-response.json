@@ -1,0 +1,48 @@
+{
+  "code": 200,
+  "page": 1,
+  "page_size": 100,
+  "total_results": 3,
+  "results": [
+    {
+      "company_name": "Northstar CRM",
+      "domain": "northstar.example",
+      "platform": "meta",
+      "ad_creative_snippet": "Bring your revenue team into one intelligent workspace.",
+      "ad_first_seen": "2026-04-01",
+      "ad_last_seen": "2026-07-20",
+      "days_active": 110,
+      "ad_url": "https://northstar.example/crm",
+      "industry": "Enterprise Computer Software",
+      "geography": "US",
+      "category": "Computer Software"
+    },
+    {
+      "company_name": "Juniper Commerce",
+      "domain": "www.juniper-commerce.example",
+      "platform": "facebook",
+      "ad_creative_snippet": "A faster storefront for growing retail brands.",
+      "ad_first_seen": "2026-05-01",
+      "ad_last_seen": "2026-07-20",
+      "days_active": 80,
+      "ad_url": "https://juniper-commerce.example/summer",
+      "industry": "eCommerce",
+      "geography": "US, Canada",
+      "category": "Retail"
+    },
+    {
+      "company_name": "Local Home Repair",
+      "domain": "local-repair.example",
+      "platform": "meta",
+      "ad_creative_snippet": "Same-day plumbing repair.",
+      "ad_first_seen": "2026-07-15",
+      "ad_last_seen": "2026-07-20",
+      "days_active": 5,
+      "ad_url": "https://local-repair.example",
+      "industry": "Home Improvement and Repair",
+      "geography": "US",
+      "category": "Home and Garden Services"
+    }
+  ],
+  "message": "Advertisers fetched successfully"
+}

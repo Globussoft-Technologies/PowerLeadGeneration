@@ -1,0 +1,15 @@
+# Local environment files may contain credentials.
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated output.
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.vite/
+*.tsbuildinfo
+*.log
+package-lock.json
