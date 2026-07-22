@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      MONGO_URI: mongodb://127.0.0.1:27017/power_leads_ci
+      ADS_API_URL: http://127.0.0.1:4000/api/v1/common/advertiser/names
+      ADS_API_TOKEN: ci-placeholder
+      ADS_API_MODE: mock
+      APOLLO_API_KEY: ci-placeholder
+      APOLLO_MODE: mock
+      GEMINI_MODE: mock
+      MAIL_MODE: mock
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Build shared package
+        run: npm run build --workspace shared
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build production artifacts
+        run: npm run build
+
+      - name: Upload production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: power-leads-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            client/dist
+            server/dist
+            shared/dist
