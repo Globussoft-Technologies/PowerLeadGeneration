@@ -36,16 +36,15 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-fund --no-audit
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
@@ -58,7 +57,7 @@ jobs:
           npm run build
 
       - name: Package native Node.js release
-        run: tar -czf power-leads-release.tgz client/dist client/package.json server/dist server/package.json shared/dist shared/package.json package.json package-lock.json
+        run: tar -czf power-leads-release.tgz client/dist client/package.json server/dist server/package.json shared/dist shared/package.json package.json
 
       - name: Smoke-test release contents
         run: |
@@ -67,10 +66,10 @@ jobs:
           test -f release-smoke/client/dist/index.html
           test -f release-smoke/server/dist/index.js
           test -f release-smoke/shared/dist/index.js
-          test -f release-smoke/package-lock.json
+          test -f release-smoke/package.json
 
       - name: Upload delivery artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: power-leads-${{ inputs.environment || 'production' }}-${{ github.sha }}
           if-no-files-found: error

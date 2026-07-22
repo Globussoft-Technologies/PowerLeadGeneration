@@ -4,7 +4,7 @@ Production v1 uses GitHub Actions and native Node.js artifacts. Containerization
 
 ## Workflows
 
-- `.github/workflows/ci.yml` runs on pull requests and pushes to `main`. It audits production dependencies, installs from the lockfile, builds the shared package, typechecks, tests, builds all workspaces, and uploads the compiled artifacts.
+- `.github/workflows/ci.yml` runs on pull requests and pushes to `main`. It installs from the workspace manifests, audits production dependencies, builds the shared package, typechecks, tests, builds all workspaces, and uploads the compiled artifacts.
 - `.github/workflows/delivery.yml` runs manually for `staging`/`production` or automatically for `v*` tags. It repeats verification and creates `power-leads-release.tgz`.
 
 Configure `staging` and `production` as protected GitHub environments. Production should require approval before the delivery job can run.
@@ -16,12 +16,12 @@ The release contains:
 - `client/dist` static frontend files.
 - `server/dist` compiled API files.
 - `shared/dist` compiled shared types/runtime package.
-- Root and workspace `package.json` files plus `package-lock.json` for deterministic production installation.
+- Root and workspace `package.json` files for production installation.
 
 On the selected host, the provider-specific deployment adapter must:
 
 1. Download and extract the approved artifact.
-2. Run `npm ci --omit=dev`.
+2. Run `npm install --omit=dev --no-fund --no-audit`.
 3. Inject protected production environment variables configured on the host.
 4. Run the database migration step when the release declares one.
 5. Serve `client/dist` and proxy same-origin `/api` requests to the API process.
