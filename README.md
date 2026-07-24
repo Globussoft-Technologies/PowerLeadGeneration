@@ -99,7 +99,7 @@ MAIL_MODE=mock
 
 Use mock mode for development and CI. Live mode requires the corresponding credentials in protected environment variables. See [Environment configuration](docs/ENVIRONMENT.md) for the complete reference.
 
-Apollo mobile-number reveal is asynchronous and requires a public HTTPS callback configured through `APOLLO_WEBHOOK_URL`. SendGrid production delivery requires a verified sender/domain and signed Event Webhook configuration.
+Apollo mobile-number reveal is asynchronous and requires a public HTTPS callback configured through `APOLLO_WEBHOOK_URL`. SendGrid production delivery requires a verified sender/domain. Delivery-status tracking additionally requires a signed Event Webhook configuration.
 
 ## Authentication
 
@@ -130,6 +130,17 @@ The server suite covers authentication, workspace isolation, pipeline recovery, 
 ## Production delivery
 
 GitHub Actions verifies every pull request and produces native Node.js release artifacts. The API and worker run as separate processes and share MongoDB.
+
+After installing dependencies, configuring the root `.env`, and building the application, start the client, API, and worker with PM2:
+
+```bash
+npm run build
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 startup
+```
+
+Use `pm2 status`, `pm2 logs`, and `pm2 restart ecosystem.config.cjs --update-env` for routine operations. Run the command printed by `pm2 startup` once with the required server privileges so the processes return after a reboot.
 
 Hosting-specific deployment and rollback commands are intentionally attached after the target platform is selected. Before live delivery, configure protected production variables, rotated provider credentials, MongoDB backups, private Ads API connectivity, a verified SendGrid identity, and public webhook URLs.
 

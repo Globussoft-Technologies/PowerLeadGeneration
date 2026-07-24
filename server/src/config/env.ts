@@ -4,6 +4,11 @@ import { z } from "zod";
 
 dotenv.config({ path: resolve(import.meta.dirname, "../../../.env") });
 
+const optionalNonEmptyString = z.preprocess(
+  (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+  z.string().min(1).optional()
+);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(4001),
@@ -50,7 +55,7 @@ const envSchema = z.object({
   SENDGRID_API_KEY: z.string().min(1).optional(),
   SENDGRID_FROM_EMAIL: z.string().email().optional(),
   SENDGRID_FROM_NAME: z.string().min(1).max(100).default("Power Leads"),
-  SENDGRID_WEBHOOK_PUBLIC_KEY: z.string().min(1).optional(),
+  SENDGRID_WEBHOOK_PUBLIC_KEY: optionalNonEmptyString,
   SENDGRID_WEBHOOK_MAX_AGE_SECONDS: z.coerce.number().int().min(60).max(3600).default(300),
   MAIL_PER_RUN_LIMIT: z.coerce.number().int().min(1).max(10_000).default(50),
   MAIL_DAILY_WORKSPACE_LIMIT: z.coerce.number().int().min(1).max(100_000).default(100),
@@ -79,9 +84,6 @@ const envSchema = z.object({
   }
   if (value.MAIL_MODE === "live" && !value.SENDGRID_FROM_EMAIL) {
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["SENDGRID_FROM_EMAIL"], message: "A verified sender is required when MAIL_MODE=live" });
-  }
-  if (value.NODE_ENV === "production" && value.MAIL_MODE === "live" && !value.SENDGRID_WEBHOOK_PUBLIC_KEY) {
-    context.addIssue({ code: z.ZodIssueCode.custom, path: ["SENDGRID_WEBHOOK_PUBLIC_KEY"], message: "Required for signed SendGrid webhooks in production" });
   }
 });
 
