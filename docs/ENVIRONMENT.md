@@ -56,7 +56,7 @@ Production mail also uses:
 
 | Variable | Guidance |
 |---|---|
-| `SENDGRID_WEBHOOK_PUBLIC_KEY` | Public ECDSA verification key copied from the signed SendGrid Event Webhook configuration |
+| `SENDGRID_WEBHOOK_PUBLIC_KEY` | Optional public ECDSA verification key copied from the signed SendGrid Event Webhook configuration; without it, delivery-status webhooks return `503` |
 | `SENDGRID_WEBHOOK_MAX_AGE_SECONDS` | Maximum accepted signed-request age; default `300` |
 | `MAIL_PER_RUN_LIMIT` | Maximum reserved recipients per run; default `50` |
 | `MAIL_DAILY_WORKSPACE_LIMIT` | Maximum reserved recipients per UTC day and workspace; default `100` |
